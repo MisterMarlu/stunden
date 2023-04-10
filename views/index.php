@@ -1,8 +1,18 @@
 <?php
 /**
- * @var int $month
+ * @var string $month
  * @var \App\Model\Person[] $persons
  */
+
+$currentMonth = (int)date('m');
+
+if (isset($_COOKIE['month'])) {
+    $currentMonth = (int)$_COOKIE['month'];
+}
+
+if (isset($month)) {
+    $currentMonth = (int)$month;
+}
 ?>
 
 <div>
@@ -11,7 +21,7 @@
         <select id="month" name="month">
             <?php
 
-            $fmt =  datefmt_create(
+            $fmt = datefmt_create(
                 'de_DE',
                 IntlDateFormatter::FULL,
                 0,
@@ -19,27 +29,30 @@
                 IntlDateFormatter::GREGORIAN,
                 'MMMM'
             );
+            $fmtDate = datefmt_create(
+                'de_DE',
+                IntlDateFormatter::FULL,
+                0,
+                'Europe/Berlin',
+                IntlDateFormatter::GREGORIAN,
+                'dd.MM.YYYY - EEEE'
+            );
             for ($i = 1; $i < 13; $i++) {
                 $number = $i > 9 ? (string)$i : '0' . $i;
                 $time = strtotime('01.' . $number . '.' . date('Y'));
                 $monthName = datefmt_format($fmt, $time);
-                $currentMonth = $i === (int)date('m');
-
-                if (isset($_COOKIE['month'])) {
-                    $currentMonth = $i === (int)$_COOKIE['month'];
-                }
-
-                if (isset($month)) {
-                    $currentMonth = $i === (int)$month;
-                }
+                $isCurrentMonth = $i === $currentMonth;
                 ?>
-                <option value="<?php echo $i; ?>"
-                        <?php if ($currentMonth) {
-                            echo 'selected="selected"';
-                        }
-                        ?>
-                ><?php echo $monthName; ?></option>
-            <?php
+                <option value="<?php
+                echo $i; ?>"
+                    <?php
+                    if ($isCurrentMonth) {
+                        echo 'selected="selected"';
+                    }
+                    ?>
+                ><?php
+                    echo $monthName; ?></option>
+                <?php
             }
             ?>
         </select>
@@ -55,7 +68,7 @@
             <ul id="persons">
                 <?php
                 foreach ($persons as $person) {
-                    echo '<li data-id="' . $person->getId() . '">'.$person->getName().'</li>';
+                    echo '<li data-id="' . $person->getId() . '">' . $person->getName() . '</li>';
                 }
                 ?>
             </ul>
@@ -68,30 +81,42 @@
         </form>
     </div>
 
-    <form method="post" action="/times">
-        <div class="flex flex-row gap-2">
-            <div>
-                DATUM
-                <input type="hidden" value="DATUM">
-            </div>
-            <div>
-                <div>
-                    <label for="name">Name</label>
-                    <select name="name" id="name">
+    <form method="post" action="/times" class="flex flex-col w-1/2">
+        <?php
+        $year = (int)date('Y');
 
-                    </select>
+        for ($d = 1; $d <= 31; $d++) {
+            $time = mktime(12, 0, 0, $currentMonth, $d, $year);
+            if ((int)date('m', $time) === $currentMonth) {
+                $saveDate = date('Y-m-d', $time);
+                $date = datefmt_format($fmtDate, $time);
+                ?>
+                <div class="flex flex-row justify-between align-middle gap-2" data-row="<?php echo $d; ?>">
+                    <div>
+                        <?php echo $date; ?>
+                        <input name="date-<?php echo $d; ?>" type="hidden" value="<?php echo $saveDate; ?>">
+                    </div>
+                    <div>
+                        <div>
+                            <label for="name-<?php echo $d; ?>">Name</label>
+                            <select name="name-<?php echo $d; ?>" id="name-<?php echo $d; ?>">
+                            </select>
+                        </div>
+                        <div>
+                            <label for="time-from-<?php echo $d; ?>">Von</label>
+                            <input type="time" name="time-from-<?php echo $d; ?>" id="time-from-<?php echo $d; ?>">
+                            <label for="time-to-<?php echo $d; ?>">Bis</label>
+                            <input type="time" name="time-to-<?php echo $d; ?>" id="time-to-<?php echo $d; ?>">
+                        </div>
+                    </div>
+                    <div data-result="<?php echo $d; ?>">
+                        0
+                    </div>
                 </div>
-                <div>
-                    <label for="time-from">Von</label>
-                    <input type="time" name="time-from" id="time-from">
-                    <label for="time-to">Bis</label>
-                    <input type="time" name="time-to" id="time-to">
-                </div>
-            </div>
-            <div>
-                Ergebnis von Zeitspanne in Stunden
-            </div>
-        </div>
+        <?php
+            }
+        }
+        ?>
         <div id="submit-list" class="flex flex-row gap-2">
             <div>
                 <button type="submit">Speichern</button>

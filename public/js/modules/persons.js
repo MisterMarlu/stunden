@@ -3,7 +3,7 @@ import Request from './Request.js'
 const container = document.querySelector('#persons')
 const input = document.querySelector('#person-name')
 const form = document.querySelector('#person-form')
-const nameSelections = document.querySelectorAll('select[name="name"]')
+const nameSelections = document.querySelectorAll('select[name^="name"]')
 
 let _loading = false
 
@@ -35,11 +35,10 @@ async function addPerson(event) {
 }
 
 function addSelectOption(name, value = '0') {
-  const personOption = document.createElement('option')
-  personOption.value = value
-  personOption.innerText = name
-
   nameSelections.forEach(select => {
+    const personOption = document.createElement('option')
+    personOption.value = value
+    personOption.innerText = name
     select.appendChild(personOption)
   })
 }

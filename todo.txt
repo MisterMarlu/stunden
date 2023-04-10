@@ -1,0 +1,4 @@
+- Schichtsystem
+- Stunden können stark variieren
+- Zusammenfassung: Wer hat wie viele Stunden im Monat gearbeitet
+- Zusammenfassung: Als Übersicht schon tageweise anzeigen
