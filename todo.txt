@@ -1,4 +1,7 @@
-- Schichtsystem
+- Schichtsystem -> Config
+- Eine Spalte je Person
 - Stunden können stark variieren
 - Zusammenfassung: Wer hat wie viele Stunden im Monat gearbeitet
 - Zusammenfassung: Als Übersicht schon tageweise anzeigen
+- Druck-Version
+- Spalte "Urlaube" mit reinnehmen -> mehrere Personen möglich
