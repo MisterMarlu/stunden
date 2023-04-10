@@ -23,6 +23,11 @@ abstract class Controller
         Flight::render('layout');
     }
 
+    protected function getJsonPost(): array
+    {
+        return json_decode($_POST['json'], true);
+    }
+
     protected function getRequest(): Request
     {
         return Flight::request();
