@@ -15,6 +15,14 @@ abstract class Model
         foreach ($arguments as $key => $value) {
             if (property_exists($this, $key)) {
                 $this->{$key} = $value;
+                continue;
+            }
+
+            $parts = explode('_', $key);
+            $newKey = lcfirst(str_replace(' ', '', ucwords(implode(' ', $parts))));
+
+            if (property_exists($this, $newKey)) {
+                $this->{$newKey} = $value;
             }
         }
     }
@@ -42,6 +50,54 @@ abstract class Model
         try {
             $result = $qb->select('*')
                 ->from(static::getTableName())
+                ->executeQuery()
+                ->fetchAllAssociative();
+        } catch (Exception $e) {
+            var_dump($e->getMessage());
+            return [];
+        }
+
+        $models = [];
+
+        foreach ($result as $item) {
+            $models[] = new static($item);
+        }
+
+        return $models;
+    }
+
+    public static function find(int $id): ?static
+    {
+        $qb = App::instance()->getQueryBuilder();
+
+        try {
+            $result = $qb->select('*')
+                ->from(static::getTableName())
+                ->where($qb->expr()->eq('id', $qb->createNamedParameter($id)))
+                ->executeQuery()
+                ->fetchAssociative();
+        } catch (Exception $e) {
+            var_dump($e->getMessage());
+            return null;
+        }
+
+        return new static($result);
+    }
+
+    public static function where(array $conditions): array
+    {
+        $qb = App::instance()->getQueryBuilder();
+
+        $qb->select('*')
+        ->from(static::getTableName());
+        $where = [];
+
+        foreach ($conditions as $condition) {
+            $where[] = $qb->expr()->eq($condition[0], $qb->createNamedParameter($condition[1]));
+        }
+
+        try {
+            $result = $qb->where(...$where)
                 ->executeQuery()
                 ->fetchAllAssociative();
         } catch (Exception $e) {

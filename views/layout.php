@@ -14,7 +14,7 @@
 
     <title>Stunden</title>
 </head>
-<body class="bg-slate-200">
+<body>
 <div class="container mx-auto py-2 px-3">
     <?php echo $body_content; ?>
 </div>

@@ -15,7 +15,7 @@ if (isset($month)) {
 }
 ?>
 
-<div>
+<div class="print:hidden">
     <form action="/month" method="post">
         <label for="month">Monat</label>
         <select id="month" name="month">
@@ -60,14 +60,15 @@ if (isset($month)) {
     </form>
 </div>
 
-<button type="button" id="print">Drucken</button>
+<button type="button" id="print" class="print:hidden">Drucken</button>
 
 <div class="py-4">
-    <div class="mb-2 flex flex-row">
+    <div class="mb-2 flex flex-row print:hidden">
         <div>
             <strong>Personen</strong>
 
             <ul id="persons">
+                <li data-id="">---</li>
                 <?php
                 foreach ($persons as $person) {
                     echo '<li data-id="' . $person->getId() . '">' . $person->getName() . '</li>';
@@ -83,79 +84,83 @@ if (isset($month)) {
         </form>
     </div>
 
-    <form method="post" action="/times" class="flex flex-col w-2/3">
+    <form method="post" action="/times" class="flex flex-col w-full">
         <?php
         $year = (int)date('Y');
+        $columns = 3;
 
         for ($d = 1; $d <= 31; $d++) {
-            $time = mktime(12, 0, 0, $currentMonth, $d, $year);
+            $time = mktime(0, 0, 0, $currentMonth, $d, $year);
             if ((int)date('m', $time) === $currentMonth) {
-                $saveDate = date('Y-m-d', $time);
                 $date = datefmt_format($fmtDate, $time);
                 ?>
                 <div class="flex flex-row justify-between align-middle gap-2 my-2 pb-2 border-b border-b-slate-900" data-row="<?php echo $d; ?>">
                     <div>
                         <?php echo $date; ?>
-                        <input name="date-<?php echo $d; ?>" type="hidden" value="<?php echo $saveDate; ?>">
-                    </div>
-                    <div>
-                        <div>
-                            <label for="name-<?php echo $d; ?>">Name</label>
-                            <select name="name-<?php echo $d; ?>" id="name-<?php echo $d; ?>">
-                            </select>
-                        </div>
-                        <div>
-                            <label for="time-from-<?php echo $d; ?>">Von</label>
-                            <input type="time" name="time-from-<?php echo $d; ?>" id="time-from-<?php echo $d; ?>">
-                            <label for="time-to-<?php echo $d; ?>">Bis</label>
-                            <input type="time" name="time-to-<?php echo $d; ?>" id="time-to-<?php echo $d; ?>">
-                        </div>
-                    </div>
-                    <div data-result="<?php echo $d; ?>">
-                        0
+                        <input name="dates[<?php echo $d; ?>][date]" type="hidden" value="<?php echo $time; ?>">
                     </div>
 
+                    <?php
+                    for ($i = 0; $i < $columns; $i++) {
+                        ?>
+                    <div class="flex flex-row gap-4 items-center">
+                        <div class="flex flex-col w-full gap-2">
+                            <div class="flex flex-row gap-2">
+                                <label class="print:hidden" for="name-<?php echo $d; ?>-<?php echo $i; ?>">Name</label>
+                                <select name="dates[<?php echo $d; ?>][<?php echo $i; ?>][name]"
+                                        class="appearance-none"
+                                        id="name-<?php echo $d; ?>-<?php echo $i; ?>">
+                                </select>
+                                <span class="hidden print:block"><strong data-name="name-<?php echo $d; ?>-<?php echo $i; ?>"></strong></span>
+                            </div>
+                            <div class="flex flex-row w-full gap-2 justify-between">
+                                <div class="flex flex-row gap-2">
+                                    <label class="print:hidden" for="time-from-<?php echo $d; ?>-<?php echo $i; ?>">Von</label>
+                                    <input type="time" name="dates[<?php echo $d; ?>][<?php echo $i; ?>][from]" id="time-from-<?php echo $d; ?>-<?php echo $i; ?>">
+                                </div>
+                                <span class="hidden print:block">-</span>
+                                <div class="flex flex-row gap-2">
+                                    <label class="print:hidden" for="time-to-<?php echo $d; ?>-<?php echo $i; ?>">Bis</label>
+                                    <input type="time" name="dates[<?php echo $d; ?>][<?php echo $i; ?>][to]" id="time-to-<?php echo $d; ?>-<?php echo $i; ?>">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex flex-row gap-1">
+                            <span data-result="<?php echo $d; ?>-<?php echo $i; ?>">0</span>
+                            <span>Stunden</span>
+                        </div>
+                    </div>
+                    <?php
+                    }
+                    ?>
 
-                    <div>
-                        <div>
-                            <label for="name-<?php echo $d; ?>">Name</label>
-                            <select name="name-<?php echo $d; ?>" id="name-<?php echo $d; ?>">
-                            </select>
+                    <div class="flex flex-row gap-4 items-center">
+                        <div class="flex flex-col w-full gap-2">
+                            <div class="flex flex-row gap-2">
+                                <label for="vac-<?php echo $d; ?>">Urlaub</label>
+                            </div>
+                            <div class="flex flex-row w-full gap-2 justify-between">
+                                <div class="flex flex-row gap-2">
+                                    <input name="dates[<?php echo $d; ?>][vac]" id="vac-<?php echo $d; ?>"/>
+                                </div>
+                            </div>
                         </div>
-                        <div>
-                            <label for="time-from-<?php echo $d; ?>">Von</label>
-                            <input type="time" name="time-from-<?php echo $d; ?>" id="time-from-<?php echo $d; ?>">
-                            <label for="time-to-<?php echo $d; ?>">Bis</label>
-                            <input type="time" name="time-to-<?php echo $d; ?>" id="time-to-<?php echo $d; ?>">
-                        </div>
-                    </div>
-                    <div data-result="<?php echo $d; ?>">
-                        0
                     </div>
 
-
-                    <div>
-                        <div>
-                            <label for="name-<?php echo $d; ?>">Name</label>
-                            <select name="name-<?php echo $d; ?>" id="name-<?php echo $d; ?>">
-                            </select>
-                        </div>
-                        <div>
-                            <label for="time-from-<?php echo $d; ?>">Von</label>
-                            <input type="time" name="time-from-<?php echo $d; ?>" id="time-from-<?php echo $d; ?>">
-                            <label for="time-to-<?php echo $d; ?>">Bis</label>
-                            <input type="time" name="time-to-<?php echo $d; ?>" id="time-to-<?php echo $d; ?>">
-                        </div>
-                    </div>
-                    <div data-result="<?php echo $d; ?>">
-                        0
-                    </div>
                 </div>
         <?php
             }
         }
         ?>
-        <div id="submit-list" class="flex flex-row gap-2">
+
+        <div class="flex flex-col justify-between align-middle gap-2 my-2 pb-2 border-b border-b-slate-900">
+            <?php
+            foreach ($persons as $person) {
+                echo '<div data-id="' . $person->getId() . '">' . $person->getName() . ': <span data-id="hours-' . $person->getId() . '"></span></div>';
+            }
+            ?>
+        </div>
+        <div id="submit-list" class="flex flex-row gap-2 print:hidden">
             <div>
                 <button type="submit">Speichern</button>
             </div>
