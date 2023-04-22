@@ -1,8 +1,31 @@
 <?php
 /**
  * @var string $month
- * @var \App\Model\Person[] $persons
+ * @var Person[] $persons
+ * @var Shift[] $shifts
+ * @var Vacation[] $vacations
  */
+
+use App\Model\Person;
+use App\Model\Shift;
+use App\Model\Vacation;
+
+$fmt = datefmt_create(
+    'de_DE',
+    IntlDateFormatter::FULL,
+    0,
+    'Europe/Berlin',
+    IntlDateFormatter::GREGORIAN,
+    'MMMM'
+);
+$fmtDate = datefmt_create(
+    'de_DE',
+    IntlDateFormatter::FULL,
+    0,
+    'Europe/Berlin',
+    IntlDateFormatter::GREGORIAN,
+    'dd.MM.YYYY - EEEE'
+);
 
 $currentMonth = (int)date('m');
 
@@ -20,23 +43,6 @@ if (isset($month)) {
         <label for="month">Monat</label>
         <select id="month" name="month">
             <?php
-
-            $fmt = datefmt_create(
-                'de_DE',
-                IntlDateFormatter::FULL,
-                0,
-                'Europe/Berlin',
-                IntlDateFormatter::GREGORIAN,
-                'MMMM'
-            );
-            $fmtDate = datefmt_create(
-                'de_DE',
-                IntlDateFormatter::FULL,
-                0,
-                'Europe/Berlin',
-                IntlDateFormatter::GREGORIAN,
-                'dd.MM.YYYY - EEEE'
-            );
             for ($i = 1; $i < 13; $i++) {
                 $number = $i > 9 ? (string)$i : '0' . $i;
                 $time = strtotime('01.' . $number . '.' . date('Y'));
@@ -67,7 +73,7 @@ if (isset($month)) {
         <div>
             <strong>Personen</strong>
 
-            <ul id="persons">
+            <ul data-persons>
                 <li data-id="">---</li>
                 <?php
                 foreach ($persons as $person) {
@@ -77,9 +83,9 @@ if (isset($month)) {
             </ul>
         </div>
 
-        <form class="flex flex-col" id="person-form">
+        <form class="flex flex-col" data-person-form>
             <label for="person-name">Neue Person</label>
-            <input id="person-name">
+            <input id="person-name" data-person-name>
             <button type="submit">Person hinzufügen</button>
         </form>
     </div>
@@ -93,70 +99,123 @@ if (isset($month)) {
             $time = mktime(0, 0, 0, $currentMonth, $d, $year);
             if ((int)date('m', $time) === $currentMonth) {
                 $date = datefmt_format($fmtDate, $time);
+                $vacation = null;
+
+                foreach ($vacations as $vac) {
+                    if (date('Y-m-d', $time) === date('Y-m-d', $vac->getDate())) {
+                        $vacation = $vac;
+                    }
+                }
                 ?>
-                <div class="flex flex-row justify-between align-middle gap-2 my-2 pb-2 border-b border-b-slate-900" data-row="<?php echo $d; ?>">
+                <div class="flex flex-row justify-between align-middle gap-2 my-2 pb-2 border-b border-b-slate-900"
+                     data-row="<?php
+                     echo $d; ?>">
                     <div>
-                        <?php echo $date; ?>
-                        <input name="dates[<?php echo $d; ?>][date]" type="hidden" value="<?php echo $time; ?>">
+                        <?php
+                        echo $date; ?>
+                        <input name="dates[<?php
+                        echo $d; ?>][date]" type="hidden" value="<?php
+                        echo $time; ?>">
                     </div>
 
                     <?php
+                    $givenShifts = [];
+
                     for ($i = 0; $i < $columns; $i++) {
+                        $shift = null;
+                        $id = $d . '-' . $i;
+
+                        foreach ($shifts as $tmpShift) {
+                            if (date('Y-m-d', $time) === date('Y-m-d', $tmpShift->getFromTime())) {
+                                if (!in_array($tmpShift->getId(), $givenShifts)) {
+                                    $shift = $tmpShift;
+                                    $givenShifts[] = $shift->getId();
+                                }
+                            }
+                        }
                         ?>
-                    <div class="flex flex-row gap-4 items-center">
-                        <div class="flex flex-col w-full gap-2">
-                            <div class="flex flex-row gap-2">
-                                <label class="print:hidden" for="name-<?php echo $d; ?>-<?php echo $i; ?>">Name</label>
-                                <select name="dates[<?php echo $d; ?>][<?php echo $i; ?>][name]"
-                                        class="appearance-none"
-                                        id="name-<?php echo $d; ?>-<?php echo $i; ?>">
-                                </select>
-                                <span class="hidden print:block"><strong data-name="name-<?php echo $d; ?>-<?php echo $i; ?>"></strong></span>
+                        <div class="flex flex-row gap-4 items-center" data-shift="<?php echo $id; ?>">
+                            <div class="flex flex-col w-full gap-2">
+                                <div class="flex flex-row gap-2">
+                                    <label class="print:hidden" for="name-<?php
+                                    echo $id; ?>">Name</label>
+                                    <select name="dates[<?php
+                                    echo $d; ?>][<?php
+                                    echo $i; ?>][name]"
+                                            data-name="<?php echo $id; ?>"
+                                            data-value="<?php echo $shift?->getId(); ?>"
+                                            class="appearance-none"
+                                            id="name-<?php
+                                            echo $id; ?>">
+                                    </select>
+                                    <span class="hidden print:block"><strong data-name-print="<?php echo $id; ?>"></strong></span>
+                                </div>
+
+                                <div class="flex flex-row w-full gap-2 justify-between">
+                                    <div class="flex flex-row gap-2">
+                                        <label class="print:hidden" for="time-from-<?php
+                                        echo $id; ?>">Von</label>
+                                        <input type="time"
+                                               name="dates[<?php
+                                        echo $d; ?>][<?php
+                                        echo $i; ?>][from]"
+                                               data-from="<?php echo $id; ?>"
+                                               id="time-from-<?php
+                                        echo $id; ?>">
+                                    </div>
+                                    <span class="hidden print:block">-</span>
+                                    <div class="flex flex-row gap-2">
+                                        <label class="print:hidden" for="time-to-<?php
+                                        echo $id; ?>">Bis</label>
+                                        <input type="time"
+                                               name="dates[<?php
+                                        echo $d; ?>][<?php
+                                        echo $i; ?>][to]"
+                                               data-to="<?php echo $id; ?>"
+                                               id="time-to-<?php
+                                        echo $id; ?>">
+                                    </div>
+                                </div>
                             </div>
-                            <div class="flex flex-row w-full gap-2 justify-between">
-                                <div class="flex flex-row gap-2">
-                                    <label class="print:hidden" for="time-from-<?php echo $d; ?>-<?php echo $i; ?>">Von</label>
-                                    <input type="time" name="dates[<?php echo $d; ?>][<?php echo $i; ?>][from]" id="time-from-<?php echo $d; ?>-<?php echo $i; ?>">
-                                </div>
-                                <span class="hidden print:block">-</span>
-                                <div class="flex flex-row gap-2">
-                                    <label class="print:hidden" for="time-to-<?php echo $d; ?>-<?php echo $i; ?>">Bis</label>
-                                    <input type="time" name="dates[<?php echo $d; ?>][<?php echo $i; ?>][to]" id="time-to-<?php echo $d; ?>-<?php echo $i; ?>">
-                                </div>
+                            <div class="flex flex-row gap-1">
+                                <span data-result="<?php
+                                echo $id; ?>">00:00</span>
                             </div>
                         </div>
-                        <div class="flex flex-row gap-1">
-                            <span data-result="<?php echo $d; ?>-<?php echo $i; ?>">0</span>
-                            <span>Stunden</span>
-                        </div>
-                    </div>
-                    <?php
+                        <?php
                     }
                     ?>
 
                     <div class="flex flex-row gap-4 items-center">
                         <div class="flex flex-col w-full gap-2">
                             <div class="flex flex-row gap-2">
-                                <label for="vac-<?php echo $d; ?>">Urlaub</label>
+                                <label for="vac-<?php
+                                echo $d; ?>">Urlaub</label>
                             </div>
                             <div class="flex flex-row w-full gap-2 justify-between">
                                 <div class="flex flex-row gap-2">
-                                    <input name="dates[<?php echo $d; ?>][vac]" id="vac-<?php echo $d; ?>"/>
+                                    <input name="dates[<?php
+                                    echo $d; ?>][vac]"
+                                           id="vac-<?php
+                                    echo $d; ?>"
+                                    value="<?php echo $vacation?->getPersons(); ?>"/>
                                 </div>
                             </div>
                         </div>
                     </div>
 
                 </div>
-        <?php
+                <?php
             }
         }
         ?>
 
-        <div class="flex flex-col justify-between align-middle gap-2 my-2 pb-2 border-b border-b-slate-900">
+        <div class="flex flex-col justify-between align-middle gap-2 my-2 pb-2 border-b border-b-slate-900"
+             data-month-result>
             <?php
             foreach ($persons as $person) {
-                echo '<div data-id="' . $person->getId() . '">' . $person->getName() . ': <span data-id="hours-' . $person->getId() . '"></span></div>';
+                echo '<div>' . $person->getName(
+                    ) . ': <span data-id="' . $person->getId() . '">00:00</span></div>';
             }
             ?>
         </div>

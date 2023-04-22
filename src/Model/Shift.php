@@ -9,40 +9,40 @@ class Shift extends Model
         return 'shift';
     }
 
-    protected int $fromTime;
+    protected string $fromTime;
 
-    protected int $toTime;
+    protected string $toTime;
 
     protected int $personId;
 
     /**
-     * @return int
+     * @return string
      */
-    public function getFromTime(): int
+    public function getFromTime(): string
     {
         return $this->fromTime;
     }
 
     /**
-     * @param int $fromTime
+     * @param string $fromTime
      */
-    public function setFromTime(int $fromTime): void
+    public function setFromTime(string $fromTime): void
     {
         $this->fromTime = $fromTime;
     }
 
     /**
-     * @return int
+     * @return string
      */
-    public function getToTime(): int
+    public function getToTime(): string
     {
         return $this->toTime;
     }
 
     /**
-     * @param int $toTime
+     * @param string $toTime
      */
-    public function setToTime(int $toTime): void
+    public function setToTime(string $toTime): void
     {
         $this->toTime = $toTime;
     }

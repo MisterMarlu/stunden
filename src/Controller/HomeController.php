@@ -3,6 +3,8 @@
 namespace App\Controller;
 
 use App\Model\Person;
+use App\Model\Shift;
+use App\Model\Vacation;
 use Flight;
 
 class HomeController extends Controller
@@ -16,6 +18,8 @@ class HomeController extends Controller
         }
 
         $arguments['persons'] = Person::all();
+        $arguments['shifts'] = Shift::all();
+        $arguments['vacations'] = Vacation::all();
 
         $this->view('index', $arguments);
     }

@@ -1,9 +1,10 @@
 import Request from './Request.js'
+import selector from "./selector.js";
 
-const container = document.querySelector('#persons')
-const input = document.querySelector('#person-name')
-const form = document.querySelector('#person-form')
-const nameSelections = document.querySelectorAll('select[name^="name"]')
+const container = document.querySelector(selector.person.container)
+const input = document.querySelector(selector.person.input)
+const form = document.querySelector(selector.person.form)
+const nameSelections = document.querySelectorAll(selector.name)
 
 let _loading = false
 
@@ -39,6 +40,11 @@ function addSelectOption(name, value = '0') {
     const personOption = document.createElement('option')
     personOption.value = value
     personOption.innerText = name
+
+    if (select.dataset.value.length > 0 && select.data.value === value) {
+      personOption.selected = true
+    }
+
     select.appendChild(personOption)
   })
 }
