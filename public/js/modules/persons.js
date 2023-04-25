@@ -9,9 +9,9 @@ const nameSelections = document.querySelectorAll(selector.name)
 let _loading = false
 
 export default function enablePersons () {
-  container.querySelectorAll('li').forEach(li => {
-    addSelectOption(li.innerText, li.dataset.id)
-  })
+  // container.querySelectorAll('li').forEach(li => {
+  //   addSelectOption(li.innerText, li.dataset.id)
+  // })
   form.addEventListener('submit', addPerson)
 }
 

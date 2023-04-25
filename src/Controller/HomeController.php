@@ -53,13 +53,13 @@ class HomeController extends Controller
             }
 
             foreach ($day as $index => $shiftData) {
-                if (in_array($index, static::$dayKeys) || empty(trim($shiftData['name']))) {
+                if (in_array($index, static::$dayKeys) || (int)$shiftData['name'] === 0) {
                     continue;
                 }
 
                 $data = [
-                    'from_time' => (int)$shiftData['from'],
-                    'to_time' => (int)$shiftData['to'],
+                    'from_time' => $shiftData['from'],
+                    'to_time' => $shiftData['to'],
                     'date' => $date,
                     'shift_index' => $index,
                     'person_id' => (int)$shiftData['name'],

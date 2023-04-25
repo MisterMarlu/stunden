@@ -119,17 +119,14 @@ if (isset($month)) {
                     </div>
 
                     <?php
-                    $givenShifts = [];
-
                     for ($i = 0; $i < $columns; $i++) {
                         $shift = null;
                         $id = $d . '-' . $i;
 
                         foreach ($shifts as $tmpShift) {
-                            if (date('Y-m-d', $time) === date('Y-m-d', $tmpShift->getFromTime())) {
-                                if (!in_array($tmpShift->getId(), $givenShifts)) {
+                            if (date('Y-m-d', $time) === date('Y-m-d', $tmpShift->getDate())) {
+                                if ($tmpShift->getShiftIndex() === $i) {
                                     $shift = $tmpShift;
-                                    $givenShifts[] = $shift->getId();
                                 }
                             }
                         }
@@ -147,6 +144,21 @@ if (isset($month)) {
                                             class="appearance-none"
                                             id="name-<?php
                                             echo $id; ?>">
+                                        <option>---</option>
+
+                                        <?php
+                                        foreach ($persons as $person) {
+                                            echo '<option';
+                                            echo ' value="' . $person->getId() . '"';
+
+                                            if ($shift?->getPersonId() === $person->getId()) {
+                                                echo ' selected="selected"';
+                                            }
+
+                                            echo '>' . $person->getName() . '</option>';
+                                        }
+                                        ?>
+
                                     </select>
                                     <span class="hidden print:block"><strong data-name-print="<?php echo $id; ?>"></strong></span>
                                 </div>
@@ -160,6 +172,13 @@ if (isset($month)) {
                                         echo $d; ?>][<?php
                                         echo $i; ?>][from]"
                                                data-from="<?php echo $id; ?>"
+
+                                               <?php
+                                               if ($shift instanceof Shift) {
+                                                   echo 'value="' . $shift->getFromTime() . '"';
+                                               }
+                                               ?>
+
                                                id="time-from-<?php
                                         echo $id; ?>">
                                     </div>
@@ -172,6 +191,13 @@ if (isset($month)) {
                                         echo $d; ?>][<?php
                                         echo $i; ?>][to]"
                                                data-to="<?php echo $id; ?>"
+
+                                               <?php
+                                               if ($shift instanceof Shift) {
+                                                   echo 'value="' . $shift->getToTime() . '"';
+                                               }
+                                               ?>
+
                                                id="time-to-<?php
                                         echo $id; ?>">
                                     </div>
