@@ -2,7 +2,7 @@
 
 namespace App\Model;
 
-class Vacation extends Model
+class Vacation extends MonthModel
 {
     public static function getTableName(): string
     {

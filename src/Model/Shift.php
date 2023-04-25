@@ -2,17 +2,42 @@
 
 namespace App\Model;
 
-class Shift extends Model
+/**
+ *
+ */
+class Shift extends MonthModel
 {
+    /**
+     * @return string
+     */
     public static function getTableName(): string
     {
         return 'shift';
     }
 
+    /**
+     * @var string
+     */
     protected string $fromTime;
 
+    /**
+     * @var string
+     */
     protected string $toTime;
 
+    /**
+     * @var int
+     */
+    protected int $date;
+
+    /**
+     * @var int
+     */
+    protected int $shiftIndex;
+
+    /**
+     * @var int
+     */
     protected int $personId;
 
     /**
@@ -50,6 +75,38 @@ class Shift extends Model
     /**
      * @return int
      */
+    public function getDate(): int
+    {
+        return $this->date;
+    }
+
+    /**
+     * @param int $date
+     */
+    public function setDate(int $date): void
+    {
+        $this->date = $date;
+    }
+
+    /**
+     * @return int
+     */
+    public function getShiftIndex(): int
+    {
+        return $this->shiftIndex;
+    }
+
+    /**
+     * @param int $shiftIndex
+     */
+    public function setShiftIndex(int $shiftIndex): void
+    {
+        $this->shiftIndex = $shiftIndex;
+    }
+
+    /**
+     * @return int
+     */
     public function getPersonId(): int
     {
         return $this->personId;
@@ -63,6 +120,9 @@ class Shift extends Model
         $this->personId = $personId;
     }
 
+    /**
+     * @return Person|null
+     */
     public function getPerson(): ?Person
     {
         return Person::find($this->personId);

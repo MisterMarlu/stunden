@@ -25,14 +25,15 @@ async function addPerson(event) {
   _loading = true
   const personName = input.value
 
-  await Request.post('/add-person', {name: personName})
+  const personData = await Request.post('/add-person', {name: personName})
   _loading = false
 
   input.value = ''
   const person = document.createElement('li')
   person.innerText = personName
+  person.dataset.id = personData.id
   container.appendChild(person)
-  addSelectOption(personName, personName)
+  addSelectOption(personName, personData.id)
 }
 
 function addSelectOption(name, value = '0') {

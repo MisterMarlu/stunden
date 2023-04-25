@@ -9,8 +9,12 @@ class PersonController extends Controller
 {
     public function add(): void
     {
+        $name = $this->getJsonPost()['name'];
         $person = new Person($this->getJsonPost());
         $person->save();
-        Flight::json([]);
+
+        $persons = Person::where([['name', $name]]);
+
+        Flight::json($persons[0] ?? []);
     }
 }

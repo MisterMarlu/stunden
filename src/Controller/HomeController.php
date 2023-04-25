@@ -18,8 +18,8 @@ class HomeController extends Controller
         }
 
         $arguments['persons'] = Person::all();
-        $arguments['shifts'] = Shift::all();
-        $arguments['vacations'] = Vacation::all();
+        $arguments['shifts'] = Shift::findByMonth($arguments['month'] ?? null);
+        $arguments['vacations'] = Vacation::findByMonth($arguments['month'] ?? null);
 
         $this->view('index', $arguments);
     }
@@ -30,10 +30,45 @@ class HomeController extends Controller
         Flight::redirect('/');
     }
 
+    protected static array $dayKeys = [
+        'date',
+        'vac',
+    ];
+
     public function times(): void
     {
-        var_dump('<pre>', $_POST, '</pre>');
-        exit;
-        $this->view('index');
+        $days = $_POST['dates'];
+
+        foreach ($days as $day) {
+            $date = (int)$day['date'];
+            $vac = trim($day['vac']);
+
+            if (!empty($vac)) {
+                $vacData = [
+                    'date' => $date,
+                    'persons' => $vac,
+                ];
+                $vacation = Vacation::findOrNew($vacData);
+                $vacation->save();
+            }
+
+            foreach ($day as $index => $shiftData) {
+                if (in_array($index, static::$dayKeys) || empty(trim($shiftData['name']))) {
+                    continue;
+                }
+
+                $data = [
+                    'from_time' => (int)$shiftData['from'],
+                    'to_time' => (int)$shiftData['to'],
+                    'date' => $date,
+                    'shift_index' => $index,
+                    'person_id' => (int)$shiftData['name'],
+                ];
+                $shift = Shift::findOrNew($data);
+                $shift->save();
+            }
+        }
+
+        Flight::redirect('/');
     }
 }
