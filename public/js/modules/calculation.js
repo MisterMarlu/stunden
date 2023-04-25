@@ -10,7 +10,9 @@ export default class Calculation {
         this.#totalContainer = document.querySelector(selector.monthResult)
         document.querySelectorAll(selector.row).forEach(row => {
             row.querySelectorAll(selector.shift).forEach(shift => {
-                this.#shifts.push(new Shift(shift))
+                const shiftElement = new Shift(shift)
+                shiftElement.initiate()
+                this.#shifts.push(shiftElement)
             })
         })
 

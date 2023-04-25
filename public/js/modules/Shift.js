@@ -17,9 +17,26 @@ export default class {
         this.#listen()
     }
 
+    initiate() {
+        this.#updateTotal()
+        this.#updateColor()
+    }
+
     #listen() {
+        this.#personSelect.addEventListener('change', this.#updateColor.bind(this))
         this.#from.addEventListener('change', this.#fire.bind(this))
         this.#to.addEventListener('change', this.#fire.bind(this))
+    }
+
+    #updateColor() {
+        const option = this.#personSelect.options[this.#personSelect.selectedIndex]
+
+        if (option.dataset.color) {
+            this.#personSelect.style.backgroundColor = option.dataset.color
+            return
+        }
+
+        this.#personSelect.style.backgroundColor = null
     }
 
     #fire() {

@@ -646,6 +646,14 @@ textarea {
   gap: 1rem;
 }
 
+.rounded {
+  border-radius: 0.25rem;
+}
+
+.border {
+  border-width: 1px;
+}
+
 .border-b {
   border-bottom-width: 1px;
 }
@@ -653,6 +661,10 @@ textarea {
 .border-b-slate-900 {
   --tw-border-opacity: 1;
   border-bottom-color: rgb(15 23 42 / var(--tw-border-opacity));
+}
+
+.p-1 {
+  padding: 0.25rem;
 }
 
 .px-3 {
@@ -679,11 +691,20 @@ textarea {
 }
 
 @media print {
+  * {
+    -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+  }
+
   .print\:block {
     display: block;
   }
 
   .print\:hidden {
     display: none;
+  }
+
+  .print\:opacity-0 {
+    opacity: 0;
   }
 }

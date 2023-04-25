@@ -3,6 +3,7 @@ import selector from "./selector.js";
 
 const container = document.querySelector(selector.person.container)
 const input = document.querySelector(selector.person.input)
+const colorInput = document.querySelector(selector.person.color)
 const form = document.querySelector(selector.person.form)
 const nameSelections = document.querySelectorAll(selector.name)
 
@@ -23,26 +24,32 @@ async function addPerson(event) {
   }
 
   _loading = true
-  const personName = input.value
+  const postData = {
+    name: input.value,
+    color: colorInput.value
+  }
 
-  const personData = await Request.post('/add-person', {name: personName})
+  const personData = await Request.post('/add-person', postData)
   _loading = false
 
   input.value = ''
+  colorInput.value = '#ffffff'
   const person = document.createElement('li')
-  person.innerText = personName
+  person.innerText = personData.name
   person.dataset.id = personData.id
+  person.dataset.color = personData.color
   container.appendChild(person)
-  addSelectOption(personName, personData.id)
+  addSelectOption(personData)
 }
 
-function addSelectOption(name, value = '0') {
+function addSelectOption(person) {
   nameSelections.forEach(select => {
     const personOption = document.createElement('option')
-    personOption.value = value
-    personOption.innerText = name
+    personOption.value = person.id
+    personOption.innerText = person.name
+    personOption.dataset.color = person.color
 
-    if (select.dataset.value.length > 0 && select.data.value === value) {
+    if (select.dataset.value.length > 0 && select.dataset.value === person.id) {
       personOption.selected = true
     }
 

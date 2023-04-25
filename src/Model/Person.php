@@ -11,6 +11,8 @@ class Person extends Model
 
     protected string $name;
 
+    protected string $color;
+
     /**
      * @return string
      */
@@ -25,5 +27,21 @@ class Person extends Model
     public function setName(string $name): void
     {
         $this->name = $name;
+    }
+
+    /**
+     * @return string
+     */
+    public function getColor(): string
+    {
+        return $this->color;
+    }
+
+    /**
+     * @param string $color
+     */
+    public function setColor(string $color): void
+    {
+        $this->color = $color;
     }
 }

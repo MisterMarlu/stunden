@@ -11,6 +11,7 @@ const selectors = {
         person: '[data-id]',
         form: '[data-person-form]',
         input: '[data-person-name]',
+        color: '[data-person-color]',
     },
     monthResult: '[data-month-result]',
 }

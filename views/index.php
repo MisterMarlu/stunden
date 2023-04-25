@@ -69,7 +69,7 @@ if (isset($month)) {
 <button type="button" id="print" class="print:hidden">Drucken</button>
 
 <div class="py-4">
-    <div class="mb-2 flex flex-row print:hidden">
+    <div class="mb-2 flex flex-row gap-4 print:hidden print:opacity-0">
         <div>
             <strong>Personen</strong>
 
@@ -77,16 +77,22 @@ if (isset($month)) {
                 <li data-id="">---</li>
                 <?php
                 foreach ($persons as $person) {
-                    echo '<li data-id="' . $person->getId() . '">' . $person->getName() . '</li>';
+                    echo '<li data-id="' . $person->getId() . '" data-color="' . $person->getColor() . '">' . $person->getName() . '</li>';
                 }
                 ?>
             </ul>
         </div>
 
-        <form class="flex flex-col" data-person-form>
-            <label for="person-name">Neue Person</label>
-            <input id="person-name" data-person-name>
-            <button type="submit">Person hinzufügen</button>
+        <form class="flex flex-col gap-4" data-person-form>
+            <div class="flex flex-row gap-2">
+                <label for="person-name">Neue Person</label>
+                <input id="person-name" data-person-name>
+            </div>
+            <div class="flex flex-row gap-2">
+                <label for="person-color">Farbe</label>
+                <input id="person-color" type="color" value="#ffffff" data-person-color>
+            </div>
+            <button type="submit" class="border border-b-slate-900">Person hinzufügen</button>
         </form>
     </div>
 
@@ -141,7 +147,7 @@ if (isset($month)) {
                                     echo $i; ?>][name]"
                                             data-name="<?php echo $id; ?>"
                                             data-value="<?php echo $shift?->getId(); ?>"
-                                            class="appearance-none"
+                                            class="appearance-none p-1"
                                             id="name-<?php
                                             echo $id; ?>">
                                         <option>---</option>
@@ -150,6 +156,7 @@ if (isset($month)) {
                                         foreach ($persons as $person) {
                                             echo '<option';
                                             echo ' value="' . $person->getId() . '"';
+                                            echo ' data-color="' . $person->getColor() . '"';
 
                                             if ($shift?->getPersonId() === $person->getId()) {
                                                 echo ' selected="selected"';
@@ -240,9 +247,12 @@ if (isset($month)) {
         <div class="flex flex-col justify-between align-middle gap-2 my-2 pb-2 border-b border-b-slate-900"
              data-month-result>
             <?php
-            foreach ($persons as $person) {
-                echo '<div>' . $person->getName(
-                    ) . ': <span data-id="' . $person->getId() . '">00:00</span></div>';
+            foreach ($persons as $person) {?>
+                <div>
+                    <span style="background-color: <?php echo $person->getColor(); ?>;" class="rounded p-1"><?php echo $person->getName(); ?></span>
+                    <span data-id="<?php echo $person->getId(); ?>">00:00</span>
+                </div>
+            <?php
             }
             ?>
         </div>

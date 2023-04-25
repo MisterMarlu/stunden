@@ -17,3 +17,9 @@
         @apply print:text-sm;
     }
 }
+
+@media print {
+    * {
+        print-color-adjust: exact;
+    }
+}
