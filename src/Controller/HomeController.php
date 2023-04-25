@@ -46,9 +46,9 @@ class HomeController extends Controller
             if (!empty($vac)) {
                 $vacData = [
                     'date' => $date,
-                    'persons' => $vac,
                 ];
                 $vacation = Vacation::findOrNew($vacData);
+                $vacation->setPersons($vac);
                 $vacation->save();
             }
 
@@ -58,13 +58,13 @@ class HomeController extends Controller
                 }
 
                 $data = [
-                    'from_time' => $shiftData['from'],
-                    'to_time' => $shiftData['to'],
                     'date' => $date,
                     'shift_index' => $index,
-                    'person_id' => (int)$shiftData['name'],
                 ];
                 $shift = Shift::findOrNew($data);
+                $shift->setFromTime($shiftData['from']);
+                $shift->setToTime($shiftData['to']);
+                $shift->setPersonId((int)$shiftData['name']);
                 $shift->save();
             }
         }

@@ -110,7 +110,7 @@ if (isset($month)) {
                 <div class="flex flex-row justify-between align-middle gap-2 my-2 pb-2 border-b border-b-slate-900"
                      data-row="<?php
                      echo $d; ?>">
-                    <div>
+                    <div class="flex flex-row items-center">
                         <?php
                         echo $date; ?>
                         <input name="dates[<?php
@@ -216,15 +216,16 @@ if (isset($month)) {
                         <div class="flex flex-col w-full gap-2">
                             <div class="flex flex-row gap-2">
                                 <label for="vac-<?php
-                                echo $d; ?>">Urlaub</label>
+                                echo $d; ?>">Bemerkung</label>
                             </div>
                             <div class="flex flex-row w-full gap-2 justify-between">
                                 <div class="flex flex-row gap-2">
-                                    <input name="dates[<?php
+                                    <textarea cols="30"
+                                              rows="3"
+                                        name="dates[<?php
                                     echo $d; ?>][vac]"
                                            id="vac-<?php
-                                    echo $d; ?>"
-                                    value="<?php echo $vacation?->getPersons(); ?>"/>
+                                    echo $d; ?>"><?php echo $vacation?->getPersons(); ?></textarea>
                                 </div>
                             </div>
                         </div>

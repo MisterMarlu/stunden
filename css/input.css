@@ -3,8 +3,17 @@
 @tailwind utilities;
 
 @layer base {
+    textarea,
     input,
     select {
         @apply border border-slate-950 rounded p-0.5 text-sm print:border-0 print:p-0 print:text-base;
+    }
+
+    textarea {
+        @apply appearance-none;
+    }
+
+    * {
+        @apply print:text-sm;
     }
 }
