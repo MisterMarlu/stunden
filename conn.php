@@ -9,7 +9,7 @@ $local = [
 ];
 
 $prod = [
-    'dbname' => 'mydb',
+    'dbname' => 'stunden',
     'user' => 'user',
     'password' => 'secret',
     'host' => 'localhost',
