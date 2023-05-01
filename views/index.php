@@ -99,7 +99,7 @@ if (isset($month)) {
     <form method="post" action="/times" class="flex flex-col w-full">
         <?php
         $year = (int)date('Y');
-        $columns = 3;
+        $columns = 5;
 
         for ($d = 1; $d <= 31; $d++) {
             $time = mktime(0, 0, 0, $currentMonth, $d, $year);
